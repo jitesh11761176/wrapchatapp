@@ -5,8 +5,9 @@ import { prisma } from "@/lib/prisma"
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string }> }
 ) {
+  const { roomId } = await params
   try {
     const session = await getServerSession(authOptions)
     if (!session) {
@@ -15,7 +16,7 @@ export async function POST(
 
     // Check if room exists
     const room = await prisma.chatRoom.findUnique({
-      where: { id: params.roomId }
+      where: { id: roomId }
     })
 
     if (!room) {
@@ -30,7 +31,7 @@ export async function POST(
       where: {
         userId_chatRoomId: {
           userId: session.user.id,
-          chatRoomId: params.roomId
+          chatRoomId: roomId
         }
       }
     })
@@ -46,7 +47,7 @@ export async function POST(
     const membership = await prisma.chatRoomMember.create({
       data: {
         userId: session.user.id,
-        chatRoomId: params.roomId
+        chatRoomId: roomId
       },
       include: {
         user: {
@@ -73,8 +74,9 @@ export async function POST(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string }> }
 ) {
+  const { roomId } = await params
   try {
     const session = await getServerSession(authOptions)
     if (!session) {
@@ -85,7 +87,7 @@ export async function DELETE(
     await prisma.chatRoomMember.deleteMany({
       where: {
         userId: session.user.id,
-        chatRoomId: params.roomId
+        chatRoomId: roomId
       }
     })
 
