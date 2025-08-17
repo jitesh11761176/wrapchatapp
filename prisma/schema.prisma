@@ -67,6 +67,8 @@ model User {
   sessions        Session[]
   messages        Message[]
   chatRoomMembers ChatRoomMember[]
+  sentDirectMessages     DirectMessage[] @relation("SentDirectMessages")
+  receivedDirectMessages DirectMessage[] @relation("ReceivedDirectMessages")
 
   @@map("users")
 }
@@ -119,4 +121,20 @@ model Message {
   chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
 
   @@map("messages")
+}
+
+model DirectMessage {
+  id         String      @id @default(cuid())
+  content    String      @db.Text
+  type       MessageType @default(TEXT)
+  senderId   String
+  receiverId String
+  read       Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  sender   User @relation("SentDirectMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedDirectMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@map("direct_messages")
 }

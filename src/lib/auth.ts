@@ -6,7 +6,9 @@ import { prisma } from "./prisma"
 import { compare } from "bcryptjs"
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  // Temporarily removed PrismaAdapter to debug Google OAuth issue
+  // adapter: PrismaAdapter(prisma),
+  debug: process.env.NODE_ENV === "development",
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -69,15 +71,20 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
-    async signIn({ user, account }) {
+    async signIn({ user, account, profile }) {
+      console.log("SignIn callback triggered:", { user: user?.email, provider: account?.provider })
+      
       if (account?.provider === "google") {
         try {
+          console.log("Attempting Google sign in for:", user.email)
+          
           const existingUser = await prisma.user.findUnique({
             where: { email: user.email! }
           })
 
           if (!existingUser) {
-            await prisma.user.create({
+            console.log("Creating new user:", user.email)
+            const newUser = await prisma.user.create({
               data: {
                 email: user.email!,
                 name: user.name,
@@ -85,9 +92,12 @@ export const authOptions: NextAuthOptions = {
                 role: "USER"
               }
             })
+            console.log("New user created:", newUser.id)
+          } else {
+            console.log("Existing user found:", existingUser.id)
           }
         } catch (error) {
-          console.error("Error during sign in:", error)
+          console.error("Error during Google sign in:", error)
           return false
         }
       }
