@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Plus, Send, Users, Bot, Smile, Image as ImageIcon } from "lucide-react"
+import { ArrowLeft, Plus, Send, Users, Bot, MessageCircle, Mail } from "lucide-react"
+import AIAssistantModal from "@/components/ai-assistant-modal"
 
 interface ChatRoom {
   id: string
@@ -57,6 +58,7 @@ export default function ChatPage() {
   const [showCreateRoom, setShowCreateRoom] = useState(false)
   const [newRoomName, setNewRoomName] = useState("")
   const [newRoomDescription, setNewRoomDescription] = useState("")
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -223,6 +225,14 @@ export default function ChatPage() {
                 </Button>
               </Link>
               <h1 className="text-2xl font-bold text-gray-900">Chat Rooms</h1>
+            </div>
+            <div className="flex items-center">
+              <Link href="/messages">
+                <Button variant="outline" size="sm">
+                  <Mail className="w-4 h-4 mr-2" />
+                  Direct Messages
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -422,6 +432,21 @@ export default function ChatPage() {
           </div>
         </div>
       </div>
+
+      {/* Floating AI Assistant Button */}
+      <Button
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+        onClick={() => setIsAIAssistantOpen(true)}
+        size="lg"
+      >
+        <MessageCircle className="w-6 h-6" />
+      </Button>
+
+      {/* AI Assistant Modal */}
+      <AIAssistantModal 
+        isOpen={isAIAssistantOpen} 
+        onClose={() => setIsAIAssistantOpen(false)} 
+      />
     </div>
   )
 }

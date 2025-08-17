@@ -8,8 +8,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string }> }
 ) {
+  const { roomId } = await params
   try {
     const session = await getServerSession(authOptions)
     if (!session) {
@@ -22,7 +23,7 @@ export async function GET(
 
     const messages = await prisma.message.findMany({
       where: {
-        chatRoomId: params.roomId
+        chatRoomId: roomId
       },
       include: {
         user: {
@@ -60,8 +61,9 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string }> }
 ) {
+  const { roomId } = await params
   try {
     const session = await getServerSession(authOptions)
     if (!session) {
@@ -82,7 +84,7 @@ export async function POST(
       where: {
         userId_chatRoomId: {
           userId: session.user.id,
-          chatRoomId: params.roomId
+          chatRoomId: roomId
         }
       }
     })
@@ -100,7 +102,7 @@ export async function POST(
         content,
         type,
         userId: session.user.id,
-        chatRoomId: params.roomId
+        chatRoomId: roomId
       },
       include: {
         user: {
@@ -115,7 +117,7 @@ export async function POST(
 
     // Update room's last activity
     await prisma.chatRoom.update({
-      where: { id: params.roomId },
+      where: { id: roomId },
       data: { updatedAt: new Date() }
     })
 
@@ -134,7 +136,7 @@ export async function POST(
             content: aiResponse,
             type: "AI",
             userId: null, // AI messages don't have a user
-            chatRoomId: params.roomId
+            chatRoomId: roomId
           },
           include: {
             user: {

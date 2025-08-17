@@ -12,8 +12,7 @@ datasource db {
 
 enum Role {
   ADMIN
-  TEACHER
-  STUDENT
+  USER
 }
 
 enum MessageType {
@@ -59,7 +58,7 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  role          Role      @default(STUDENT)
+  role          Role      @default(USER)
   password      String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -67,9 +66,9 @@ model User {
   accounts        Account[]
   sessions        Session[]
   messages        Message[]
-  courses         Course[]
-  enrollments     Enrollment[]
   chatRoomMembers ChatRoomMember[]
+  sentDirectMessages     DirectMessage[] @relation("SentDirectMessages")
+  receivedDirectMessages DirectMessage[] @relation("ReceivedDirectMessages")
 
   @@map("users")
 }
@@ -81,36 +80,6 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
-}
-
-model Course {
-  id          String       @id @default(cuid())
-  title       String
-  description String?
-  content     String?      @db.Text
-  createdBy   String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  creator     User         @relation(fields: [createdBy], references: [id], onDelete: Cascade)
-  enrollments Enrollment[]
-
-  @@map("courses")
-}
-
-model Enrollment {
-  id         String   @id @default(cuid())
-  userId     String
-  courseId   String
-  progress   Float    @default(0.0)
-  enrolledAt DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, courseId])
-  @@map("enrollments")
 }
 
 model ChatRoom {
@@ -152,4 +121,20 @@ model Message {
   chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
 
   @@map("messages")
+}
+
+model DirectMessage {
+  id         String      @id @default(cuid())
+  content    String      @db.Text
+  type       MessageType @default(TEXT)
+  senderId   String
+  receiverId String
+  read       Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  sender   User @relation("SentDirectMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedDirectMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@map("direct_messages")
 }
