@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -14,8 +14,9 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const resolvedParams = await params
     const currentUserId = session.user.id
-    const otherUserId = params.userId
+    const otherUserId = resolvedParams.userId
 
     // Get messages between these two users
     const messages = await prisma.directMessage.findMany({
@@ -77,7 +78,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -95,8 +96,9 @@ export async function POST(
       )
     }
 
+    const resolvedParams = await params
     const senderId = session.user.id
-    const receiverId = params.userId
+    const receiverId = resolvedParams.userId
 
     // Verify receiver exists
     const receiver = await prisma.user.findUnique({
