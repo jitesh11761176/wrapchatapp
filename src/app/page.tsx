@@ -40,8 +40,7 @@ export default function Home() {
               WrapChatApp
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              A complete chat and learning platform with AI assistance, course management, 
-              and real-time collaboration features.
+              A complete chat platform with AI assistance and real-time collaboration features.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/auth/signin">
@@ -72,17 +71,6 @@ export default function Home() {
               </CardHeader>
             </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-green-600" />
-                </div>
-                <CardTitle>Course Management</CardTitle>
-                <CardDescription>
-                  Create, manage, and track progress in courses with AI-generated content
-                </CardDescription>
-              </CardHeader>
-            </Card>
 
             <Card className="text-center hover:shadow-lg transition-shadow">
               <CardHeader>
@@ -91,7 +79,7 @@ export default function Home() {
                 </div>
                 <CardTitle>Role-Based Access</CardTitle>
                 <CardDescription>
-                  Admin, teacher, and student roles with tailored dashboards and permissions
+                  Admin and user roles with tailored dashboards and permissions
                 </CardDescription>
               </CardHeader>
             </Card>
