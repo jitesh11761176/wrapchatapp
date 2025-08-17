@@ -1,36 +1,177 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WrapChatApp - Complete Learning Platform
 
-## Getting Started
+A production-ready chat and learning platform built with Next.js 14, featuring real-time chat, AI assistance, course management, and role-based access control.
 
-First, run the development server:
+## 🚀 Features
 
+### Authentication & Authorization
+- ✅ Google OAuth integration
+- ✅ Credentials-based authentication
+- ✅ Role-based access control (Admin/Teacher/Student)
+- ✅ Protected routes with NextAuth middleware
+
+### Chat System
+- ✅ Real-time chat rooms with 3-second polling
+- ✅ AI assistant integration (Gemini API)
+- ✅ Message types: Text, AI, Emoji, GIF
+- ✅ Room creation, joining, and leaving
+- ✅ Member management
+
+### Course Management
+- ✅ CRUD operations for courses
+- ✅ AI-powered content generation
+- ✅ Student enrollment system
+- ✅ Progress tracking
+- ✅ Role-based course access
+
+### Dashboard Features
+- ✅ Personalized dashboards by role
+- ✅ Course progress visualization
+- ✅ User management (Admin/Teacher)
+- ✅ Activity tracking
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js 14 with App Router, TypeScript, Tailwind CSS
+- **UI Components:** shadcn/ui, Radix UI primitives
+- **Authentication:** NextAuth.js with Prisma adapter
+- **Database:** PostgreSQL with Prisma ORM
+- **AI Integration:** Google Gemini API
+- **Icons:** Lucide React
+- **Styling:** Tailwind CSS with CSS variables
+
+## 📋 Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database (local or cloud)
+- Google OAuth credentials
+- Gemini API key
+- GIPHY API key (optional)
+
+## ⚙️ Installation
+
+1. **Install dependencies**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install --legacy-peer-deps
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Environment setup**
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Configure environment variables**
+Edit `.env.local` with your credentials:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/wrapchatapp"
 
-## Learn More
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-super-secret-key"
 
-To learn more about Next.js, take a look at the following resources:
+# Google OAuth (Get from Google Cloud Console)
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Gemini AI (Get from Google AI Studio)
+GEMINI_API_KEY="your-gemini-api-key"
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# GIPHY (Optional - Get from GIPHY Developers)
+GIPHY_API_KEY="your-giphy-api-key"
 
-## Deploy on Vercel
+# App
+APP_BASE_URL="http://localhost:3000"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. **Database setup**
+```bash
+# Generate Prisma client
+npx prisma generate
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Push schema to database
+npx prisma db push
+
+# Optional: Open Prisma Studio
+npx prisma studio
+```
+
+5. **Run the development server**
+```bash
+npm run dev
+```
+
+Visit `http://localhost:3000` to see the application.
+
+## 🔑 Getting API Keys
+
+### Google OAuth
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable Google+ API
+4. Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client IDs"
+5. Add authorized origins: `http://localhost:3000`
+6. Add authorized redirect URIs: `http://localhost:3000/api/auth/callback/google`
+
+### Gemini API
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create a new API key
+3. Copy the key to your `.env.local`
+
+### GIPHY API (Optional)
+1. Go to [GIPHY Developers](https://developers.giphy.com/)
+2. Create an account and new app
+3. Get your API key
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. **Push to GitHub**
+2. **Import project to Vercel**
+3. **Configure environment variables** in Vercel dashboard
+4. **Set up database** (Neon, Supabase, or PlanetScale recommended)
+5. **Deploy**
+
+### Environment Variables for Production
+Remember to update these for production:
+- `NEXTAUTH_URL` → Your production domain
+- `DATABASE_URL` → Production database URL
+- `APP_BASE_URL` → Your production domain
+
+## 🎯 User Roles & Permissions
+
+### Student
+- Join chat rooms
+- Send messages and interact with AI
+- Enroll in courses
+- View progress
+- Access course materials
+
+### Teacher  
+- All student permissions
+- Create and manage courses
+- View student progress
+- Generate AI course content
+- Manage enrolled students
+
+### Admin
+- All teacher permissions
+- User management
+- Role assignments
+- System administration
+
+## 🔧 Development
+
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production  
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npx prisma studio    # Open database GUI
+npx prisma generate  # Generate Prisma client
+npx prisma db push   # Push schema changes
+```
