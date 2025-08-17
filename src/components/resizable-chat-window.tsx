@@ -3,11 +3,9 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
-import { X, Minus, Maximize2, Minimize2, Send, User, Bot } from "lucide-react"
+import { X, Minus, Send, User, Bot } from "lucide-react"
 
 interface ChatWindowProps {
-  id: string
   title: string
   type: "direct" | "room" | "ai"
   isMinimized?: boolean
@@ -19,7 +17,6 @@ interface ChatWindowProps {
 }
 
 export default function ResizableChatWindow({
-  id,
   title,
   type,
   isMinimized = false,
@@ -34,11 +31,10 @@ export default function ResizableChatWindow({
   const [isDragging, setIsDragging] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const [messages, setMessages] = useState<any[]>([])
+  const [messages] = useState<Array<{ content: string; isOwn: boolean }>>([])
   const [newMessage, setNewMessage] = useState("")
   
   const windowRef = useRef<HTMLDivElement>(null)
-  const resizeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -246,7 +242,6 @@ export default function ResizableChatWindow({
 
       {/* Resize Handle */}
       <div
-        ref={resizeRef}
         className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
         onMouseDown={handleResizeStart}
       >

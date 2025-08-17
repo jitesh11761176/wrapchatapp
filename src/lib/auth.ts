@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
+// import { PrismaAdapter } from "@next-auth/prisma-adapter" // Temporarily disabled
 import { prisma } from "./prisma"
 import { compare } from "bcryptjs"
 
@@ -71,7 +71,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       console.log("SignIn callback triggered:", { user: user?.email, provider: account?.provider })
       
       if (account?.provider === "google") {

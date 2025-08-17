@@ -305,7 +305,6 @@ export default function Dashboard() {
       {chatWindows.map((window) => (
         <ResizableChatWindow
           key={window.id}
-          id={window.id}
           title={window.title}
           type={window.type}
           initialPosition={window.position}
