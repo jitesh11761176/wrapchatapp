@@ -9,6 +9,7 @@ export const authOptions: NextAuthOptions = {
   // Temporarily removed PrismaAdapter to debug Google OAuth issue
   // adapter: PrismaAdapter(prisma),
   debug: process.env.NODE_ENV === "development",
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -102,6 +103,13 @@ export const authOptions: NextAuthOptions = {
         }
       }
       return true
+    },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
     }
   },
   pages: {
