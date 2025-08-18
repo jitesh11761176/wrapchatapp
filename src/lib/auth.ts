@@ -1,5 +1,4 @@
 import { NextAuthOptions } from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 // import { PrismaAdapter } from "@next-auth/prisma-adapter" // Temporarily disabled
 import { prisma } from "./prisma"
@@ -11,10 +10,6 @@ export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -71,38 +66,6 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role as string
       }
       return session
-    },
-    async signIn({ user, account }) {
-      console.log("SignIn callback triggered:", { user: user?.email, provider: account?.provider })
-      
-      if (account?.provider === "google") {
-        try {
-          console.log("Attempting Google sign in for:", user.email)
-          
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email! }
-          })
-
-          if (!existingUser) {
-            console.log("Creating new user:", user.email)
-            const newUser = await prisma.user.create({
-              data: {
-                email: user.email!,
-                name: user.name,
-                image: user.image,
-                role: "USER"
-              }
-            })
-            console.log("New user created:", newUser.id)
-          } else {
-            console.log("Existing user found:", existingUser.id)
-          }
-        } catch (error) {
-          console.error("Error during Google sign in:", error)
-          return false
-        }
-      }
-      return true
     },
     async redirect({ url, baseUrl }) {
       // Allows relative callback URLs
