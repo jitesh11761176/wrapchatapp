@@ -75,18 +75,27 @@ export default function AIAssistantModal({ isOpen, onClose }: AIAssistantModalPr
         }),
       })
 
-      if (res.ok) {
-        const data = await res.json()
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: data.response,
-          type: "ai",
-          timestamp: new Date()
-        }
-        setMessages(prev => [...prev, aiMessage])
-      } else {
-        throw new Error("Failed to get AI response")
-      }
+const data = await res.json()
+
+if (res.ok) {
+const aiMessage: Message = {
+id: (Date.now() + 1).toString(),
+content: data.response,
+type: "ai",
+timestamp: new Date()
+}
+setMessages(prev => [...prev, aiMessage])
+} else {
+// Use the error message from the API if available
+const errorMessageContent = data.error || "Failed to get AI response";
+const errorMessage: Message = {
+id: (Date.now() + 1).toString(),
+content: `Sorry, an error occurred: ${errorMessageContent}`,
+type: "ai",
+timestamp: new Date()
+}
+setMessages(prev => [...prev, errorMessage])
+}
     } catch (error) {
       console.error("Error sending message to AI:", error)
       const errorMessage: Message = {

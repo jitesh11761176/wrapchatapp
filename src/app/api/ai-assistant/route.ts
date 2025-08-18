@@ -4,6 +4,10 @@ import { authOptions } from "@/lib/auth"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
 // Initialize Gemini AI
+if (!process.env.GEMINI_API_KEY) {
+  console.error("GEMINI_API_KEY is not set in environment variables")
+}
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 const model = genAI.getGenerativeModel({ model: "gemini-pro" })
 
@@ -11,11 +15,18 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+if (!session) {
+return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+}
 
-    const { message, history } = await req.json()
+// Check if Gemini API key is configured
+if (!process.env.GEMINI_API_KEY) {
+return NextResponse.json({ 
+error: "AI service is not properly configured. Please check API key settings." 
+}, { status: 500 })
+}
+
+const { message, history } = await req.json()
 
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 })
